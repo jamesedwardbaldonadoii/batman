@@ -1,3 +1,2 @@
-export const API_PORT = '4000';
-export const API_URL = `http://localhost:${API_PORT}`;
-export const DOMAIN_TITLE = 'app.com';
+export const API_URL =  process.env.VUE_APP_API_URL;
+export const DOMAIN_TITLE = process.env.VUE_APP_DOMAIN_TITLE;
