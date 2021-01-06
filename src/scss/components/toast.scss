@@ -1,0 +1,84 @@
+
+.app-toast-list {
+  @apply fixed right-1 top-16 w-80 z-50;
+
+  .slide-leave-active,
+  .slide-enter-active {
+    transition: .3s;
+  }
+  .slide-enter {
+    transform: translate(0, 100%);
+  }
+  .slide-leave-to {
+    transform: translate(200%, 0);
+  }
+
+}
+
+.app-toast {
+  @apply py-3 pr-5 pl-3 my-4 bg-white cursor-pointer border-solid border-l-5 rounded-tl-lg rounded-bl-lg shadow text-gray-900;
+
+  &_icon {
+    @apply bg-opacity-50 rounded-full p-1 mr-2;
+  }
+
+  &.default {
+    @apply border-gray-500;
+
+    .app-toast_icon {
+      @apply bg-gray-300;
+    }
+
+    svg {
+      @apply text-gray-400;
+    }
+  }
+
+  &.success {
+    @apply border-green-500;
+
+    .app-toast_icon {
+      @apply bg-green-300;
+    }
+
+    svg {
+      @apply text-green-400;
+    }
+  }
+
+  &.info {
+    @apply border-blue-500;
+
+    .app-toast_icon {
+      @apply bg-blue-300;
+    }
+
+    svg {
+      @apply text-blue-400;
+    }
+  }
+
+  &.warning {
+    @apply border-orange-500;
+
+    .app-toast_icon {
+      @apply bg-orange-300;
+    }
+
+    svg {
+      @apply text-orange-400;
+    }
+  }
+
+  &.error {
+    @apply border-red-500;
+
+    .app-toast_icon {
+      @apply bg-red-300;
+    }
+
+    svg {
+      @apply text-red-400;
+    }
+  }
+}

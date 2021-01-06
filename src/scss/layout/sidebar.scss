@@ -1,0 +1,29 @@
+.app-sidebar {
+  @apply absolute flex flex-col top-0 h-full w-64 bg-white z-50 shadow transition-all duration-200 ease-linear -left-48;
+
+  &:hover {
+    @apply left-0;
+  }
+
+  &.pinned {
+    @apply left-0;
+  }
+
+  &-items {
+    @apply w-full flex items-center cursor-pointer;
+    min-height: 4rem;
+
+    &:hover {
+      @apply bg-gray-700 text-white;
+
+      .app-sidebar-title,
+      svg.fill-current {
+        @apply text-white;
+      }
+    }
+  }
+
+  &-title {
+    @apply flex-1 pl-6 text-gray-500;
+  }
+}

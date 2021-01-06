@@ -1,0 +1,9 @@
+.app-header {
+  @apply h-16 flex z-50 items-center border border-solid border-gray-200 shadow-sm;
+
+  .notification-count {
+    @apply absolute top-0 right-0 rounded-full bg-red-500 text-red-100 w-4 h-4 text-center;
+    font-size: 0.60rem;
+    line-height: 15px;
+  }
+}

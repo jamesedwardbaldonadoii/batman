@@ -1,0 +1,56 @@
+.app-button {
+	@apply inline-flex items-center justify-center relative border border-solid rounded transition-background duration-700 bg-center;
+
+	&:focus {
+		@apply outline-none;
+	}
+
+	&:active {
+		@apply duration-0;
+	}
+
+  &.red {
+    &:hover {
+      background: theme('colors.red.700') radial-gradient(circle, transparent 1%, theme('colors.red.600') 1%) center/15000%;
+    }
+    &:active {
+      background-size: 100%;
+    }
+	}
+
+  &.blue {
+    &:hover {
+      background: theme('colors.blue.700') radial-gradient(circle, transparent 1%, theme('colors.blue.600') 1%) center/15000%;
+    }
+    &:active {
+      background-size: 100%;
+    }
+	}
+
+  &.gray {
+    &:hover {
+      background: theme('colors.gray.700') radial-gradient(circle, transparent 1%, theme('colors.gray.600') 1%) center/15000%;
+    }
+    &:active {
+      background-size: 100%;
+    }
+	}
+
+  &.white {
+    &:hover {
+      background: theme('colors.gray.400') radial-gradient(circle, transparent 1%, theme('colors.gray.500') 1%) center/15000%;
+    }
+    &:active {
+      background-size: 100%;
+    }
+	}
+
+  &.green {
+    &:hover {
+      background: theme('colors.green.700') radial-gradient(circle, transparent 1%, theme('colors.green.600') 1%) center/15000%;
+    }
+    &:active {
+      background-size: 100%;
+    }
+  }
+}

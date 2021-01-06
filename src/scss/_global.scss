@@ -1,0 +1,37 @@
+html, body, #app {
+  min-height: 100vh;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: Lato, Helvetica, Arial, sans-serif;
+}
+
+img {
+  vertical-align: top;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.app-disabled {
+	@apply bg-gray-200;
+
+	* {
+		@apply text-gray-500 cursor-not-allowed bg-gray-200;
+	}
+}
+
+.app-label {
+  @apply block text-gray-700 text-sm font-bold;
+}
+
+.text-error {
+  @apply h-3 my-1 text-right block text-red-500 italic text-xs uppercase;
+}
+
+.card {
+  @apply border border-solid border-gray-400 rounded p-8 m-2 text-gray-700;
+}

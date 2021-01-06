@@ -1,0 +1,41 @@
+@import "reset";
+
+/*
+	Import fonts
+*/
+@import url('https://fonts.googleapis.com/css?family=Lato:400,400i,700,700i&display=swap');
+
+@import "tailwindcss/components";
+@import "tailwindcss/base";
+
+@import "variables";
+@import "medias";
+@import "global";
+@import "fonts";
+
+@import '~vue2-datepicker/scss/index.scss';
+
+/*
+	Custom Layout styling
+*/
+@import "layout/header";
+@import "layout/sidebar";
+
+/*
+	Custom Components styling
+*/
+@import "components/dropdown-menu";
+@import "components/datepicker";
+@import "components/checkbox";
+@import "components/loader";
+@import "components/button";
+@import "components/input";
+@import "components/toast";
+@import "components/modal";
+
+/*
+	Pages styling
+*/
+@import "pages/user";
+
+@import "tailwindcss/utilities";

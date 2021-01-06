@@ -1,0 +1,7 @@
+  input {
+    &:checked {
+      + .app-icon {
+        @apply block
+      }
+    }
+  }
