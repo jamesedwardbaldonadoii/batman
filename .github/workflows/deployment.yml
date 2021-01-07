@@ -29,5 +29,4 @@ jobs:
       - name: Run a multi-line script
         run: |
           npm install
-          npm run lint,
-          npm run build
+          npm run-script lint
