@@ -3,13 +3,14 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - echo Installing source NPM dependencies...
+      - echo Installing source NPM dependencies EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE...
       - npm install
+      - echo Done Installing source NPM dependencies AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA...
   build:
     commands:
       - echo Build started on `date`
       - echo Compiling the dist folder
-      - npm run-script build
+      - npm run build
   post_build:
     commands:
       - echo Build completed on `date`
