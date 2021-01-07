@@ -208,10 +208,8 @@ function _getFingerprint () {
     }
 
     if (window.requestIdleCallback) {
-      console.log('get fp hash @ requestIdleCallback');
       requestIdleCallback(async () => resolve(await getHash()));
     } else {
-      console.log('get fp hash @ setTimeout');
       setTimeout(async () => resolve(await getHash()), 500);
     }
   });

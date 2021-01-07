@@ -154,7 +154,7 @@ export default {
           this.$store
             .dispatch('user/getCurrent')
             .then(() => this.$router.push('/'))
-            .catch(error => console.log(error));
+            .catch(error => this.$store.commit('toast/NEW', { type: 'error', message: error.message }, { root: true }));
         })
         .catch(error => {
           this.errorServer = error.message;
