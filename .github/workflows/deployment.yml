@@ -33,6 +33,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: run-npm-lint
+        run: npm run lint --if-present
+
       - name: run-npm-ci
         run: npm ci
 
