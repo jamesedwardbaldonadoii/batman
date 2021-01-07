@@ -9,7 +9,7 @@
     "lint": "vue-cli-service lint"
   },
   "engines": {
-    "node": "v12.9.1"
+    "node": "12.9.1"
   },
   "dependencies": {
     "autoprefixer": "^10.0.4",
