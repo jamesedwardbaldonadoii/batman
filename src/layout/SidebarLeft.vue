@@ -105,9 +105,9 @@ export default {
       showPin: false,
       navigations: [
         {
-          label: 'Build My Store',
+          label: 'Shop Builder',
           icon: 'store',
-          route: 'build-store'
+          route: 'shop'
         }
       ]
     };

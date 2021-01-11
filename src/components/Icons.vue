@@ -12,12 +12,14 @@
 <script>
 import circleBlock from './icons/circleBlock';
 import creditCard from './icons/creditCard';
+import templateIcon from './icons/template';
 import arrowDown from './icons/arrowDown';
 import briefcase from './icons/briefcase';
 import clipboard from './icons/clipboard';
 import newspaper from './icons/newspaper';
 import stopwatch from './icons/stopwatch';
 import caretDown from './icons/caretDown';
+import equalizer from './icons/equalizer';
 import userPlus from './icons/userPlus';
 import calendar from './icons/calendar';
 import sortDown from './icons/sortDown';
@@ -35,6 +37,10 @@ import search from './icons/search';
 import office from './icons/office';
 import trophy from './icons/trophy';
 import ticket from './icons/ticket';
+import upload from './icons/upload';
+import images from './icons/images';
+import pacman from './icons/pacman';
+import textIcon from './icons/text';
 import store from './icons/store';
 import write from './icons/write';
 import users from './icons/users';
@@ -79,6 +85,7 @@ export default {
   },
 
   components: {
+    templateIcon,
     circleBlock,
     creditCard,
     hamburger,
@@ -88,22 +95,27 @@ export default {
     clipboard,
     newspaper,
     stopwatch,
+    equalizer,
     sortDown,
     envelope,
     calendar,
     airplane,
     statsBar,
     userPlus,
+    textIcon,
     account,
     pushpin,
     userTie,
     blocked,
+    pacman,
     sortUp,
     aidKit,
     search,
     office,
     trophy,
     ticket,
+    upload,
+    images,
     store,
     write,
     users,
