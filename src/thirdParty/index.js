@@ -4,6 +4,7 @@
  */
 import Vue from 'vue';
 import vuescroll from 'vuescroll';
+import VueKonva from 'vue-konva';
 
 Vue.use(vuescroll, {
   ops: {
@@ -19,3 +20,5 @@ Vue.use(vuescroll, {
     }
   }
 });
+
+Vue.use(VueKonva);
