@@ -35,6 +35,7 @@ import search from './icons/search';
 import office from './icons/office';
 import trophy from './icons/trophy';
 import ticket from './icons/ticket';
+import store from './icons/store';
 import write from './icons/write';
 import users from './icons/users';
 import close from './icons/close';
@@ -48,8 +49,12 @@ import bell from './icons/bell';
 import tree from './icons/tree';
 import cart from './icons/cart';
 import lock from './icons/lock';
+import plus from './icons/plus';
+import gear from './icons/gear';
 import key from './icons/key';
 import bin from './icons/bin';
+import eye from './icons/eye';
+import css from './icons/css';
 
 export default {
   name: 'AppIcons',
@@ -99,6 +104,7 @@ export default {
     office,
     trophy,
     ticket,
+    store,
     write,
     users,
     close,
@@ -110,10 +116,14 @@ export default {
     cogs,
     bell,
     tree,
+    gear,
     cart,
     lock,
+    plus,
     bin,
-    key
+    key,
+    css,
+    eye
   }
 };
 </script>

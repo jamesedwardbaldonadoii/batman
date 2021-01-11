@@ -17,9 +17,12 @@
       :height="iconSizeClass.height"
       :class="{'mr-1': label, 'invisible' : loading}"
     />
-    <div :class="{'invisible' : loading}">
-      {{ label }}
-    </div>
+
+    <slot>
+      <div :class="{'invisible' : loading}">
+        {{ label }}
+      </div>
+    </slot>
   </button>
 </template>
 
@@ -119,7 +122,7 @@ export default {
       let size;
       switch (this.size) {
         case 'sm':
-          size = 'p-2 text-sm';
+          size = 'p-1 text-sm';
           break;
         case 'lg':
           size = 'p-4 text-lg';
@@ -128,7 +131,7 @@ export default {
           size = 'p-5 text-xl';
           break;
         default:
-          size = 'p-3 text-base';
+          size = 'p-2 text-base';
       }
       return size;
     },

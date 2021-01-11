@@ -5,13 +5,10 @@
         <label class="app-label">{{ label }}</label>
 
         <div>
-          <button
+          <app-button
+            :size="btnSize"
             ref="dropdown-btn"
-            type="button"
-            class="inline-flex w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-green-500 focus:outline-none focus:border-teal-500"
-            aria-haspopup="true"
             :class="{'border-red-500': hasError}"
-            aria-expanded="true"
             @click="toggleMenu"
           >
             <div class="flex-1 text-left">
@@ -32,7 +29,7 @@
               height="h-5"
               name="caretDown"
             />
-          </button>
+          </app-button>
         </div>
 
         <div
@@ -95,6 +92,7 @@ import AppOnScrollOutside from './OnScrollOutside';
 import AppOnClickOutside from './OnClickOutside';
 import AppCheckbox from './Checkbox';
 import AppIcon from './Icons.vue';
+import AppButton from './Button.vue';
 
 export default {
   name: 'AppDropdown',
@@ -103,6 +101,7 @@ export default {
     AppOnScrollOutside,
     AppOnClickOutside,
     AppCheckbox,
+    AppButton,
     AppIcon
   },
 
@@ -142,6 +141,10 @@ export default {
     required: {
       type: Boolean,
       default: false
+    },
+    btnSize: {
+      type: String,
+      default: 'md'
     }
   },
 
@@ -218,8 +221,8 @@ export default {
     selectItem (item) {
       this.selectedItem = item;
       this.$emit('input', item.value);
-      if (this.$listeners.change) {
-        this.$emit('change', item.value);
+      if (this.$listeners.select) {
+        this.$emit('select', item.value);
       }
     },
     resetStyling () {
@@ -229,7 +232,7 @@ export default {
     },
     toggleMenu (ev) {
       if (!this.isShown) {
-        this.positionDropdownMenu(this.$refs['dropdown-btn'].getBoundingClientRect());
+        this.positionDropdownMenu(this.$refs['dropdown-btn'].$el.getBoundingClientRect());
       } else {
         this.resetStyling();
       }

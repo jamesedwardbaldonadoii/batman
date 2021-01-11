@@ -3,6 +3,7 @@ import sidebar from './sidebar';
 import toast from './toast';
 import auth from './auth';
 import user from './user';
+import page from './page';
 import dom from './dom';
 
 export default {
@@ -11,5 +12,6 @@ export default {
   toast,
   auth,
   user,
+  page,
   dom
 };

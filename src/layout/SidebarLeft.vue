@@ -103,7 +103,13 @@ export default {
   data () {
     return {
       showPin: false,
-      navigations: []
+      navigations: [
+        {
+          label: 'Build My Store',
+          icon: 'store',
+          route: 'build-store'
+        }
+      ]
     };
   },
 

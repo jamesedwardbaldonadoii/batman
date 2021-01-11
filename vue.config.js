@@ -17,7 +17,8 @@ module.exports = {
   devServer: {
     watchOptions: {
       clientLogLevel: 'warning'
-    }
+    },
+    disableHostCheck: true
   },
 
   lintOnSave: 'default'

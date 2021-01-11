@@ -1,6 +1,6 @@
 <template>
   <label
-    class="flex justify-start items-start items-center cursor-pointer"
+    class="flex justify-start items-start cursor-pointer"
     :for="labelId"
   >
     <div class="bg-white rounded border-2 border-solid border-green-900 w-5 h-5 flex-shrink-0 mr-2">

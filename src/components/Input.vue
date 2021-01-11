@@ -1,5 +1,5 @@
 <template>
-  <div class="app-input">
+  <div class="app-input box-border">
     <label
       class="app-label"
       :class="{ 'text-red-500': hasError }"
@@ -33,7 +33,6 @@
           :placeholder="placeholder || 'Type here..'"
           :accept="extension ? extension.join(',') : null"
           v-on="listeners"
-          autocomplete="new-password"
           :required="required"
         >
       </div>
