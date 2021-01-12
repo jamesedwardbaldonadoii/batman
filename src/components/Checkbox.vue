@@ -1,6 +1,6 @@
 <template>
   <label
-    class="flex justify-start items-start cursor-pointer"
+    class="flex justify-start items-center cursor-pointer"
     :for="labelId"
   >
     <div class="bg-white rounded border-2 border-solid border-green-900 w-5 h-5 flex-shrink-0 mr-2">
@@ -48,23 +48,13 @@ export default {
     }
   },
 
-  data: () => {
+  data () {
     return {
+      labelId: this.$randomId()
     };
   },
 
-  methods: {
-    getRandomInt () {
-      const min = 1;
-      const max = 1000000000;
-      return Math.floor(Math.random() * (max - min + 1) + min);
-    }
-  },
-
-  computed: {
-    labelId () {
-      return `formId${this.getRandomInt()}`;
-    },
+  computed: {,
     listeners () {
       return {
         ...this.$listeners,

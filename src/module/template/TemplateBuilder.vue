@@ -33,7 +33,7 @@
       </div>
     </div>
     <div class="w-52 flex-none bg-gray-500">
-      items
+      <app-color-picker />
     </div>
     <div
       ref="editor-wrapper"
@@ -90,6 +90,7 @@
 
 <script>
 import AppIcon from '@/components/Icons';
+import AppColorPicker from '@/components/ColorPicker';
 import Konva from 'konva';
 
 const GUIDELINE_OFFSET = 5;
@@ -97,7 +98,8 @@ const GUIDELINE_OFFSET = 5;
 export default {
 
   components: {
-    AppIcon
+    AppIcon,
+    AppColorPicker
   },
 
   props: {
@@ -127,7 +129,7 @@ export default {
       image: null,
       pages: [
         {
-          id: this.generateRandomId(),
+          id: this.$randomId(),
           title: 'Add page title'
         }
       ],
@@ -243,16 +245,7 @@ export default {
       this.configKonva.width = width;
       this.configKonva.height = height;
     },
-
-    /**
-     * @description generate random id
-     */
-    generateRandomId () {
-      const min = 1;
-      const max = 100000;
-      return Math.floor(Math.random() * (max - min + 1) + min);
-    },
-
+    
     onDragEnd (e) {
       const layer = this.$refs.layer[0].getNode();
 

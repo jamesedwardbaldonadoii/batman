@@ -175,8 +175,9 @@ export default {
     }
   },
 
-  data: () => {
+  data () {
     return {
+      checkBoxName: this.$randomId(),
       selectedList: {},
       allSelected: false,
       isAddedManually: false,
@@ -185,9 +186,6 @@ export default {
   },
 
   computed: {
-    checkBoxName () {
-      return `name${this.getRandomInt()}`;
-    },
     list () {
       this.data.list.forEach(i => {
         if (!i.error) {
@@ -213,12 +211,6 @@ export default {
   },
 
   methods: {
-    getRandomInt () {
-      const min = 1;
-      const max = 1000;
-      return Math.floor(Math.random() * (max - min + 1) + min);
-    },
-
     onChangeSelected () {
       if (this.data.list && this.data.list.length <= 0) {
         return;

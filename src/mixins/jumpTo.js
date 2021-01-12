@@ -1,5 +1,5 @@
 /**
- * Jump to some DOM element
+ * @description Jump to some DOM element
  */
 export default {
   methods: {

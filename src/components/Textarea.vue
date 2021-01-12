@@ -72,16 +72,14 @@ export default {
       default: false
     }
   },
-  data: () => {
+  data () {
     return {
+      labelId: this.$randomId(),
       borderColor: 'border-gray-200',
       errorMsg: ''
     };
   },
   computed: {
-    labelId () {
-      return `formId${this.getRandomInt()}`;
-    },
     hasError () {
       return this.error;
     },
@@ -107,13 +105,6 @@ export default {
         return 'app-disabled';
       }
       return 'text-gray-700';
-    }
-  },
-  methods: {
-    getRandomInt () {
-      const min = 1;
-      const max = 1000000000;
-      return Math.floor(Math.random() * (max - min + 1) + min);
     }
   }
 };

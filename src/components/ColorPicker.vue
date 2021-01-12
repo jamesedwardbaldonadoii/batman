@@ -1,25 +1,18 @@
 <template>
-  <div class="ui-checkbox component">
+  <div class="component">
     <label
       class="flex justify-start items-center cursor-pointer"
       :for="labelId"
     >
-      <div class="bg-white rounded-full border-2 border-solid border-gray-600 w-6 h-6 flex flex-shrink-0 justify-center items-center mr-2 focus-within:border-blue-500">
+      <div class="bg-white w-8 h-8 flex flex-shrink-0 justify-center items-center rounded">
         <input
-          type="radio"
-          class="opacity-0 absolute hidden"
-          :checked="checked"
+          class="w-full h-full rounded"
+          type="color"
           :name="name"
-          :value="val"
+          :value="value"
           v-on="listeners"
           :id="labelId"
         >
-
-        <AppIcon
-          class="app-icon fill-current w-4 h-4 text-green-500 pointer-events-none hidden"
-          name="circleBlock"
-        />
-
       </div>
       <div class="app-label select-none">{{ label }}</div>
     </label>
@@ -27,15 +20,9 @@
 </template>
 
 <script>
-import AppIcon from './Icons.vue';
 
 export default {
   name: 'AppRadioButton',
-
-  components: {
-    AppIcon
-  },
-
   props: {
     name: {
       type: String,
@@ -45,13 +32,9 @@ export default {
       type: String,
       default: null
     },
-    checked: {
-      type: Boolean,
-      required: true
-    },
-    val: {
-      type: [Boolean, String],
-      default: null
+    value: {
+      type: String,
+      default: '#000000'
     }
   },
 

@@ -148,6 +148,18 @@ export default {
     }
   },
 
+  data () {
+    return {
+      checkBoxName: this.$randomId(),
+      isShown: false,
+      errorMsg: null,
+      selectedItem: {},
+      positionObject: {
+        position: 'fixed'
+      }
+    };
+  },
+
   computed: {
     hasError () {
       return !!this.error;
@@ -157,9 +169,6 @@ export default {
     },
     windowWidth () {
       return $store.state.dom.windowWidth;
-    },
-    checkBoxName () {
-      return `name${this.getRandomInt()}`;
     },
     currentValue () {
       const item = this.dropdownItems.find(item => item.value === this.value);
@@ -195,17 +204,6 @@ export default {
     }
   },
 
-  data () {
-    return {
-      isShown: false,
-      errorMsg: null,
-      selectedItem: {},
-      positionObject: {
-        position: 'fixed'
-      }
-    };
-  },
-
   watch: {
     windowWidth: function () {
       this.hideContent();
@@ -213,11 +211,6 @@ export default {
   },
 
   methods: {
-    getRandomInt () {
-      const min = 1;
-      const max = 1000;
-      return Math.floor(Math.random() * (max - min + 1) + min);
-    },
     selectItem (item) {
       this.selectedItem = item;
       this.$emit('input', item.value);
