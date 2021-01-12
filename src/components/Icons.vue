@@ -13,6 +13,7 @@
 import circleBlock from './icons/circleBlock';
 import creditCard from './icons/creditCard';
 import templateIcon from './icons/template';
+import background from './icons/background';
 import arrowDown from './icons/arrowDown';
 import briefcase from './icons/briefcase';
 import clipboard from './icons/clipboard';
@@ -35,6 +36,7 @@ import aidKit from './icons/aidKit';
 import sortUp from './icons/sortUp';
 import search from './icons/search';
 import office from './icons/office';
+import folder from './icons/folder';
 import trophy from './icons/trophy';
 import ticket from './icons/ticket';
 import upload from './icons/upload';
@@ -87,6 +89,7 @@ export default {
   components: {
     templateIcon,
     circleBlock,
+    background,
     creditCard,
     hamburger,
     arrowDown,
@@ -107,6 +110,7 @@ export default {
     pushpin,
     userTie,
     blocked,
+    folder,
     pacman,
     sortUp,
     aidKit,
