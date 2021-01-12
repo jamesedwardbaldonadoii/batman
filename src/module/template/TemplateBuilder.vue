@@ -1,7 +1,8 @@
 <template>
   <div
     ref="template-builder"
-    class="template-builder h-full w-full flex rounded-l overflow-hidden border-gray-700 border border-solid"
+    class="template-builder h-full w-full transition-all ease-linear flex rounded-l overflow-hidden border-gray-700 border border-solid"
+    :class="{ 'fixed inset-0 z-50': isFullscreen }"
   >
     <div class="w-18 flex-none h-full bg-gray-800 relative">
       <div
@@ -33,54 +34,46 @@
       </div>
     </div>
     <div class="w-52 flex-none bg-gray-500">
-      <app-color-picker />
+      items
     </div>
     <div
-      ref="editor-wrapper"
-      class="w-full max-w-full flex-1 bg-gray-100 px-8 py-6 overflow-auto"
+      class="w-full flex-1 flex flex-col bg-gray-100 overflow-auto"
     >
+      <TemplateController :toggle-fullscreen.sync="isFullscreen" />
+
       <div
-        ref="editor-container"
-        class="w-full overflow-hidden"
+        ref="editor-wrapper"
+        class="w-full flex-1 px-8 py-6 overflow-auto"
       >
         <div
-          class="w-full"
-          :ref="page.id"
-          v-for="(page, index) in pages"
-          :key="page.id"
-          :style="pageStyle"
+          ref="editor-container"
+          class="w-full overflow-hidden"
         >
-          <div class="text-gray-500 font-bold">
-            {{ `Page ${ index + 1 } - ${ page.title }` }}
-          </div>
-          <div class="bg-white mt-2">
-            <v-stage
-              ref="stage"
-              :config="configKonva"
-              @mousedown="handleStageMouseDown"
-              @touchstart="handleStageMouseDown"
-            >
-              <v-layer ref="layer">
-                <v-rect
-                  v-for="item in rectangles"
-                  :key="item.id"
-                  :config="item"
-                  @transformend="handleTransformEnd"
-                  @dragmove="onDragMoved"
-                  @dragend="onDragEnd"
-                />
-                <v-transformer
-                  :config="configTransformer"
-                  ref="transformer"
-                />
-                <v-image
-                  :config="{
-                    image: image,
-                    draggable: true
-                  }"
-                />
-              </v-layer>
-            </v-stage>
+          <div
+            class="w-full"
+            :ref="page.id"
+            v-for="(page, index) in pages"
+            :key="page.id"
+            :style="pageStyle"
+          >
+            <div class="text-gray-500 font-bold">
+              {{ `Page ${ index + 1 } - ${ page.title }` }}
+            </div>
+            <div class="bg-white mt-2">
+              <v-stage
+                :ref="`stage-${page.id}`"
+                :config="configKonva"
+                @mousedown="handleStageMouseDown"
+                @touchstart="handleStageMouseDown"
+              >
+                <v-layer :ref="page.layer.id">
+                  <v-transformer
+                    :config="configTransformer"
+                    ref="transformer"
+                  />
+                </v-layer>
+              </v-stage>
+            </div>
           </div>
         </div>
       </div>
@@ -90,16 +83,20 @@
 
 <script>
 import AppIcon from '@/components/Icons';
-import AppColorPicker from '@/components/ColorPicker';
+import TemplateController from './TemplateController';
 import Konva from 'konva';
 
-const GUIDELINE_OFFSET = 5;
+import {
+  generateGuideLines,
+  clearGuideLines,
+  config
+} from './utils';
 
 export default {
 
   components: {
     AppIcon,
-    AppColorPicker
+    TemplateController
   },
 
   props: {
@@ -112,80 +109,105 @@ export default {
   mounted () {
     this.ro = new ResizeObserver(this.onResize).observe(this.$refs['editor-wrapper']);
     this.onResize();
-  },
 
-  created () {
-    const image = new window.Image();
-    image.src = 'https://konvajs.org/assets/yoda.jpg';
-    image.onload = () => {
-      // set image only when it is loaded
-      this.image = image;
-    };
+    this.pages.forEach(i => {
+      const layer = this.$refs[i.layer.id][0].getNode();
+
+      i.layer.children.forEach(l => {
+        if (l.component === 'Image') {
+          Konva.Image.fromURL(l.url, (imgNode) => {
+            imgNode.setAttrs(l);
+
+            // attach events
+            imgNode.on('transformend', this.handleTransformEnd);
+            imgNode.on('dragmove', this.handleOndragmove);
+            imgNode.on('dragend', this.handleOnDragend);
+
+            layer.add(imgNode);
+            layer.batchDraw();
+          });
+        } else {
+          const object = new Konva[l.component](l);
+
+          // attach events
+          object.on('transformend', this.handleTransformEnd);
+          object.on('dragmove', this.handleOndragmove);
+          object.on('dragend', this.handleOnDragend);
+
+          layer.add(object);
+          layer.batchDraw();
+        }
+      });
+    });
   },
 
   data () {
     return {
+      isFullscreen: false,
       ro: null,
       image: null,
       pages: [
         {
           id: this.$randomId(),
-          title: 'Add page title'
+          title: 'Add page title',
+          layer: {
+            id: 'layer',
+            name: 'layer',
+            children: [
+              {
+                id: this.$randomId(),
+                component: 'Circle',
+                name: 'circle',
+                // actual config
+                rotation: 0,
+                x: 241.0558985105058,
+                y: 83.99879798662761,
+                scaleX: 1,
+                scaleY: 1,
+                radius: 70,
+                fill: 'green',
+                draggable: true
+              },
+              {
+                id: this.$randomId(),
+                name: 'rect1',
+                component: 'Rect',
+
+                // actual config
+                rotation: 0,
+                x: 10,
+                y: 10,
+                width: 100,
+                height: 100,
+                scaleX: 1,
+                scaleY: 1,
+                fill: 'red',
+                draggable: true
+              },
+              {
+                id: this.$randomId(),
+                name: 'img1',
+                component: 'Image',
+                url: 'https://konvajs.org/assets/yoda.jpg',
+
+                // actual config
+                x: 241.0558985105058,
+                y: 83.99879798662761,
+                width: 150,
+                height: 200,
+                scaleX: 1,
+                scaleY: 1,
+                draggable: true
+              }
+            ]
+          }
         }
       ],
-      configTransformer: {
-        anchorStroke: 'gray',
-        anchorFill: '#f2f2f2',
-        anchorSize: 12,
-        borderStroke: 'gray',
-        borderDash: [3, 3],
-        rotationSnaps: [0, 90, 180, 270],
-        anchorCornerRadius: 3,
-        padding: 2,
-        centeredScaling: false,
-        enabledAnchors: ['top-left', 'top-center', 'top-right', 'middle-right', 'middle-left', 'bottom-left', 'bottom-center', 'bottom-right']
-      },
+      configTransformer: config.transformer,
       configKonva: {
-        width: 100,
-        height: 200
+        width: 213,
+        height: 236
       },
-      configCircle: {
-        rotation: 0,
-        x: 241.0558985105058,
-        y: 83.99879798662761,
-        scaleX: 1,
-        scaleY: 1,
-        radius: 70,
-        fill: 'red',
-        name: 'circle',
-        draggable: true
-      },
-      rectangles: [
-        {
-          rotation: 0,
-          x: 10,
-          y: 10,
-          width: 100,
-          height: 100,
-          scaleX: 1,
-          scaleY: 1,
-          fill: 'red',
-          name: 'rect1',
-          draggable: true
-        },
-        {
-          rotation: 0,
-          x: 150,
-          y: 150,
-          width: 100,
-          height: 100,
-          scaleX: 1,
-          scaleY: 1,
-          fill: 'green',
-          name: 'rect2',
-          draggable: true
-        }
-      ],
       options: [
         { icon: 'templateIcon', isActive: true, name: 'Template' },
         { icon: 'images', isActive: false, name: 'Images' },
@@ -245,100 +267,42 @@ export default {
       this.configKonva.width = width;
       this.configKonva.height = height;
     },
-    
-    onDragEnd (e) {
-      const layer = this.$refs.layer[0].getNode();
+    /**
+     * @description handle drag end
+     */
+    handleOnDragend (event) {
+      const layer = event.target.getLayer();
 
-      // clear all previous lines on the screen
-      layer.find('.guid-line').destroy();
-      layer.batchDraw();
+      // clear guidelines
+      clearGuideLines(layer);
     },
 
-    onDragMoved (e) {
-      const layer = this.$refs.layer[0].getNode();
-
-      // clear all previous lines on the screen
-      layer.find('.guid-line').destroy();
-
-      // find possible snapping lines
-      const lineGuideStops = this.getLineGuideStops(e.target);
-      // find snapping points of current object
-      const itemBounds = this.getObjectSnappingEdges(e.target);
-
-      // now find where can we snap current object
-      const guides = this.getGuides(lineGuideStops, itemBounds);
-
-      // do nothing of no snapping
-      if (!guides.length) {
-        return;
-      }
-
-      this.drawGuides(guides);
-
-      const absPos = e.target.absolutePosition();
-      // now force object position
-      guides.forEach((lg) => {
-        switch (lg.snap) {
-          case 'start': {
-            switch (lg.orientation) {
-              case 'V': {
-                absPos.x = lg.lineGuide + lg.offset;
-                break;
-              }
-              case 'H': {
-                absPos.y = lg.lineGuide + lg.offset;
-                break;
-              }
-            }
-            break;
-          }
-          case 'center': {
-            switch (lg.orientation) {
-              case 'V': {
-                absPos.x = lg.lineGuide + lg.offset;
-                break;
-              }
-              case 'H': {
-                absPos.y = lg.lineGuide + lg.offset;
-                break;
-              }
-            }
-            break;
-          }
-          case 'end': {
-            switch (lg.orientation) {
-              case 'V': {
-                absPos.x = lg.lineGuide + lg.offset;
-                break;
-              }
-              case 'H': {
-                absPos.y = lg.lineGuide + lg.offset;
-                break;
-              }
-            }
-            break;
-          }
-        }
-      });
-      e.target.absolutePosition(absPos);
+    /**
+     * @param {Event} event
+     * @description handle drag move
+     */
+    handleOndragmove (event) {
+      // generate snap guide lines
+      generateGuideLines(event);
     },
 
-    handleTransformEnd (e) {
-      // shape is transformed, let us save new attrs back to the node
+    /**
+     * @param {Event} event
+     * @description shape is transformed, let us save new attrs back to the node
+     */
+    handleTransformEnd (event) {
       // find element in our state
-      const rect = this.rectangles.find(
-        (r) => r.name === this.selectedShapeName
-      );
+      const obj = this.pages[0].layer.children.find((r) => r.name === this.selectedShapeName);
 
-      if (!rect) {
+      if (!obj) {
         return;
       }
       // update the state
-      rect.x = e.target.x();
-      rect.y = e.target.y();
-      rect.rotation = e.target.rotation();
-      rect.scaleX = e.target.scaleX();
-      rect.scaleY = e.target.scaleY();
+      obj.x = event.target.x();
+      obj.y = event.target.y();
+      obj.rotation = event.target.rotation();
+      obj.scaleX = event.target.scaleX();
+      obj.scaleY = event.target.scaleY();
     },
 
     handleStageMouseDown (e) {
@@ -356,24 +320,32 @@ export default {
         return;
       }
 
-      // find clicked rect by its name
+      // find clicked obj by its name
       const name = e.target.name();
-      const rect = this.rectangles.find((r) => r.name === name);
-      if (rect) {
+
+      const obj = this.pages[0].layer.children.find((r) => r.name === name);
+
+      if (obj) {
         this.selectedShapeName = name;
       } else {
         this.selectedShapeName = '';
       }
+
       this.updateTransformer();
     },
 
     updateTransformer () {
+      // do nothing if no objects
+      if (!this.$refs.transformer) {
+        return;
+      }
+
       // here we need to manually attach or detach Transformer node
       const transformerNode = this.$refs.transformer[0].getNode();
-      const stage = transformerNode.getStage();
-      const { selectedShapeName } = this;
 
-      const selectedNode = stage.findOne('.' + selectedShapeName);
+      const stage = transformerNode.getStage();
+
+      const selectedNode = stage.findOne(`.${this.selectedShapeName}`);
       // do nothing if selected node is already attached
       if (selectedNode === transformerNode.node()) {
         return;
@@ -386,169 +358,13 @@ export default {
         // remove transformer
         transformerNode.nodes([]);
       }
+
       transformerNode.getLayer().batchDraw();
-    },
-
-    getLineGuideStops (skipShape) {
-      const stage = skipShape.getStage();
-      // we can snap to stage borders and the center of the stage
-      var vertical = [0, stage.width() / 2, stage.width()];
-      var horizontal = [0, stage.height() / 2, stage.height()];
-
-      // and we snap over edges and center of each object on the canvas
-      stage.find('.object').forEach((guideItem) => {
-        if (guideItem === skipShape) {
-          return;
-        }
-        var box = guideItem.getClientRect();
-        // and we can snap to all edges of shapes
-        vertical.push([box.x, box.x + box.width, box.x + box.width / 2]);
-        horizontal.push([box.y, box.y + box.height, box.y + box.height / 2]);
-      });
-      return {
-        vertical: vertical.flat(),
-        horizontal: horizontal.flat()
-      };
-    },
-
-    getObjectSnappingEdges (node) {
-      var box = node.getClientRect();
-      var absPos = node.absolutePosition();
-
-      return {
-        vertical: [
-          {
-            guide: Math.round(box.x),
-            offset: Math.round(absPos.x - box.x),
-            snap: 'start'
-          },
-          {
-            guide: Math.round(box.x + box.width / 2),
-            offset: Math.round(absPos.x - box.x - box.width / 2),
-            snap: 'center'
-          },
-          {
-            guide: Math.round(box.x + box.width),
-            offset: Math.round(absPos.x - box.x - box.width),
-            snap: 'end'
-          }
-        ],
-        horizontal: [
-          {
-            guide: Math.round(box.y),
-            offset: Math.round(absPos.y - box.y),
-            snap: 'start'
-          },
-          {
-            guide: Math.round(box.y + box.height / 2),
-            offset: Math.round(absPos.y - box.y - box.height / 2),
-            snap: 'center'
-          },
-          {
-            guide: Math.round(box.y + box.height),
-            offset: Math.round(absPos.y - box.y - box.height),
-            snap: 'end'
-          }
-        ]
-      };
-    },
-
-    getGuides (lineGuideStops, itemBounds) {
-      var resultV = [];
-      var resultH = [];
-
-      lineGuideStops.vertical.forEach((lineGuide) => {
-        itemBounds.vertical.forEach((itemBound) => {
-          var diff = Math.abs(lineGuide - itemBound.guide);
-          // if the distance between guild line and object snap point is close we can consider this for snapping
-          if (diff < GUIDELINE_OFFSET) {
-            resultV.push({
-              lineGuide: lineGuide,
-              diff: diff,
-              snap: itemBound.snap,
-              offset: itemBound.offset
-            });
-          }
-        });
-      });
-
-      lineGuideStops.horizontal.forEach((lineGuide) => {
-        itemBounds.horizontal.forEach((itemBound) => {
-          var diff = Math.abs(lineGuide - itemBound.guide);
-          if (diff < GUIDELINE_OFFSET) {
-            resultH.push({
-              lineGuide: lineGuide,
-              diff: diff,
-              snap: itemBound.snap,
-              offset: itemBound.offset
-            });
-          }
-        });
-      });
-
-      var guides = [];
-
-      // find closest snap
-      var minV = resultV.sort((a, b) => a.diff - b.diff)[0];
-      var minH = resultH.sort((a, b) => a.diff - b.diff)[0];
-      if (minV) {
-        guides.push({
-          lineGuide: minV.lineGuide,
-          offset: minV.offset,
-          orientation: 'V',
-          snap: minV.snap
-        });
-      }
-      if (minH) {
-        guides.push({
-          lineGuide: minH.lineGuide,
-          offset: minH.offset,
-          orientation: 'H',
-          snap: minH.snap
-        });
-      }
-      return guides;
-    },
-
-    drawGuides (guides) {
-      const layer = this.$refs.layer[0].getNode();
-      let line;
-
-      guides.forEach((lg) => {
-        if (lg.orientation === 'H') {
-          line = new Konva.Line({
-            points: [-6000, 0, 6000, 0],
-            stroke: 'rgb(0, 161, 255)',
-            strokeWidth: 1,
-            name: 'guid-line',
-            dash: [4, 6]
-          });
-          layer.add(line);
-          line.absolutePosition({
-            x: 0,
-            y: lg.lineGuide
-          });
-          layer.batchDraw();
-        } else if (lg.orientation === 'V') {
-          line = new Konva.Line({
-            points: [0, -6000, 0, 6000],
-            stroke: 'rgb(0, 161, 255)',
-            strokeWidth: 1,
-            name: 'guid-line',
-            dash: [4, 6]
-          });
-          layer.add(line);
-          line.absolutePosition({
-            x: lg.lineGuide,
-            y: 0
-          });
-          layer.batchDraw();
-        }
-      });
     }
   },
 
   destroyed () {
+    // destroy resize oberserver
     delete this.ro;
   }
 };

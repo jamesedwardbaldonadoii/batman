@@ -4,9 +4,11 @@
       class="flex justify-start items-center cursor-pointer"
       :for="labelId"
     >
-      <div class="bg-white w-8 h-8 flex flex-shrink-0 justify-center items-center rounded">
+      <div
+        class="hover:bg-gray-300 w-8 h-8 flex flex-shrink-0 p-1 justify-center items-center rounded cursor-pointer transition-all ease-linear"
+      >
         <input
-          class="w-full h-full rounded"
+          class="w-full h-full rounded cursor-pointer outline-none border-none shadow-none m-0 p-0"
           type="color"
           :name="name"
           :value="value"
