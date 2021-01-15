@@ -2,22 +2,6 @@ import Konva from 'konva';
 
 const GUIDELINE_OFFSET = 5; // constant guidline offset
 
-const config = {
-  transformer: {
-    name: 'transformer',
-    anchorStroke: 'gray',
-    anchorFill: '#f2f2f2',
-    anchorSize: 12,
-    borderStroke: 'gray',
-    borderDash: [3, 3],
-    rotationSnaps: [0, 90, 180, 270],
-    anchorCornerRadius: 3,
-    padding: 2,
-    centeredScaling: false,
-    enabledAnchors: ['top-left', 'top-center', 'top-right', 'middle-right', 'middle-left', 'bottom-left', 'bottom-center', 'bottom-right']
-  }
-};
-
 /**
  * @param {Node} node element
  * @description get snapping edges, call this element on drag
@@ -209,15 +193,6 @@ const drawGuides = (layer, guides) => {
 };
 
 /**
- * @param {Node} layer
- * @description clear all previous lines on the screen
- */
-const clearGuideLines = (layer) => {
-  layer.find('.guid-line').destroy();
-  layer.batchDraw();
-};
-
-/**
  * @param {Event} event
  * @description generate snap guidelines
  */
@@ -243,6 +218,7 @@ const generateGuideLines = (event) => {
   drawGuides(layer, guides);
 
   const absPos = event.target.absolutePosition();
+
   // now force object position
   guides.forEach((lg) => {
     switch (lg.snap) {
@@ -292,8 +268,6 @@ const generateGuideLines = (event) => {
 };
 
 export {
-  config,
-  clearGuideLines,
   generateGuideLines,
   getObjectSnappingEdges,
   getLineGuideStops,

@@ -33,8 +33,13 @@
         </div>
       </div>
     </div>
-    <div class="w-52 flex-none bg-gray-500">
-      items
+    <div class="w-80 flex-none bg-gray-500">
+      <transition name="slide">
+        <component
+          @click="onItemSelect"
+          :is="activeTab"
+        />
+      </transition>
     </div>
     <div
       class="w-full flex-1 flex flex-col bg-gray-100 overflow-auto"
@@ -54,25 +59,15 @@
             :ref="page.id"
             v-for="(page, index) in pages"
             :key="page.id"
-            :style="pageStyle"
           >
             <div class="text-gray-500 font-bold">
               {{ `Page ${ index + 1 } - ${ page.title }` }}
             </div>
             <div class="bg-white mt-2">
-              <v-stage
-                :ref="`stage-${page.id}`"
-                :config="configKonva"
-                @mousedown="handleStageMouseDown"
-                @touchstart="handleStageMouseDown"
-              >
-                <v-layer :ref="page.layer.id">
-                  <v-transformer
-                    :config="configTransformer"
-                    ref="transformer"
-                  />
-                </v-layer>
-              </v-stage>
+              <div
+                class="bg-white"
+                :id="`stage-${page.id}`"
+              />
             </div>
           </div>
         </div>
@@ -84,18 +79,18 @@
 <script>
 import AppIcon from '@/components/Icons';
 import TemplateController from './TemplateController';
-import Konva from 'konva';
-
-import {
-  generateGuideLines,
-  clearGuideLines,
-  config
-} from './utils';
+import TemplateBuilderImages from './TemplateBuilderImages';
+import TemplateBuilderObjects from './TemplateBuilderObjects';
+import TemplateBuilderList from './TemplateBuilderList';
+import CanvasBuilder from './CanvasBuilder';
 
 export default {
 
   components: {
     AppIcon,
+    TemplateBuilderList,
+    TemplateBuilderImages,
+    TemplateBuilderObjects,
     TemplateController
   },
 
@@ -107,50 +102,46 @@ export default {
   },
 
   mounted () {
-    this.ro = new ResizeObserver(this.onResize).observe(this.$refs['editor-wrapper']);
-    this.onResize();
+    const CanvasBuilderConfig = {
+      hasTransform: true,
+      hasSnap: true
+    };
 
-    this.pages.forEach(i => {
-      const layer = this.$refs[i.layer.id][0].getNode();
+    this.pages.forEach(page => {
+      // new canvas
+      this.canvas[page.id] = new CanvasBuilder(CanvasBuilderConfig);
 
-      i.layer.children.forEach(l => {
-        if (l.component === 'Image') {
-          Konva.Image.fromURL(l.url, (imgNode) => {
-            imgNode.setAttrs(l);
+      // listen on resize container
+      this.ro[page.id] = new ResizeObserver(() => {
+        this.canvas[page.id].resizeStage(this.$refs['editor-container']);
+      }).observe(this.$refs['editor-wrapper']);
 
-            // attach events
-            imgNode.on('transformend', this.handleTransformEnd);
-            imgNode.on('dragmove', this.handleOndragmove);
-            imgNode.on('dragend', this.handleOnDragend);
+      // create new stage
+      this.canvas[page.id].createStage({ container: `stage-${page.id}` });
 
-            layer.add(imgNode);
-            layer.batchDraw();
-          });
-        } else {
-          const object = new Konva[l.component](l);
+      page.layers.forEach(layer => {
+        // create new layer
+        this.canvas[page.id].createLayer(layer.id);
 
-          // attach events
-          object.on('transformend', this.handleTransformEnd);
-          object.on('dragmove', this.handleOndragmove);
-          object.on('dragend', this.handleOnDragend);
-
-          layer.add(object);
-          layer.batchDraw();
-        }
+        layer.children.forEach(config => {
+          this.canvas[page.id].createObject({ layerId: layer.id, config });
+        });
       });
     });
   },
 
   data () {
     return {
+      canvas: {},
+      activeTab: 'TemplateBuilderList',
       isFullscreen: false,
-      ro: null,
+      ro: {},
       image: null,
       pages: [
         {
           id: this.$randomId(),
           title: 'Add page title',
-          layer: {
+          layers: [{
             id: 'layer',
             name: 'layer',
             children: [
@@ -200,27 +191,19 @@ export default {
                 draggable: true
               }
             ]
-          }
+          }]
         }
       ],
-      configTransformer: config.transformer,
-      configKonva: {
-        width: 213,
-        height: 236
-      },
       options: [
-        { icon: 'templateIcon', isActive: true, name: 'Template' },
-        { icon: 'images', isActive: false, name: 'Images' },
+        { icon: 'templateIcon', isActive: true, name: 'Template', component: 'TemplateBuilderList' },
+        { icon: 'images', isActive: false, name: 'Images', component: 'TemplateBuilderImages' },
         { icon: 'upload', isActive: false, name: 'Upload' },
-        { icon: 'pacman', isActive: false, name: 'Objects' },
+        { icon: 'pacman', isActive: false, name: 'Objects', component: 'TemplateBuilderObjects' },
         { icon: 'textIcon', isActive: false, name: 'Text' },
         { icon: 'background', isActive: false, name: 'Background' },
         { icon: 'folder', isActive: false, name: 'Folder' },
         { icon: 'cart', isActive: false, name: 'Shop' }
       ],
-      pageStyle: {
-        height: 0
-      },
       style: {
         top: 0
       }
@@ -237,6 +220,10 @@ export default {
 
       this.options.forEach((i, $index) => {
         i.isActive = $index === id;
+
+        if (i.isActive) {
+          this.activeTab = i.component;
+        }
       });
     },
 
@@ -251,115 +238,16 @@ export default {
       this.style.top = `${el.top - elTemplateBuilder.top - 1}px`;
     },
 
-    /**
-     * @requires $refs['editor-container'] the elemen wrapper
-     * @description set the active tab state
-     */
-    onResize () {
-      if (!this.$refs['editor-container']) {
-        return;
-      }
+    onItemSelect (e) {
+      const config = {
+        id: this.$randomId(),
+        name: 'img2',
+        component: 'Image',
+        url: e.target.src,
+        draggable: true
+      };
 
-      const editorContainerPosition = this.$refs['editor-container'].getBoundingClientRect();
-      const { width, height } = editorContainerPosition;
-
-      this.pageStyle.height = `${width * 9 / 16}px`;
-      this.configKonva.width = width;
-      this.configKonva.height = height;
-    },
-    /**
-     * @description handle drag end
-     */
-    handleOnDragend (event) {
-      const layer = event.target.getLayer();
-
-      // clear guidelines
-      clearGuideLines(layer);
-    },
-
-    /**
-     * @param {Event} event
-     * @description handle drag move
-     */
-    handleOndragmove (event) {
-      // generate snap guide lines
-      generateGuideLines(event);
-    },
-
-    /**
-     * @param {Event} event
-     * @description shape is transformed, let us save new attrs back to the node
-     */
-    handleTransformEnd (event) {
-      // find element in our state
-      const obj = this.pages[0].layer.children.find((r) => r.name === this.selectedShapeName);
-
-      if (!obj) {
-        return;
-      }
-      // update the state
-      obj.x = event.target.x();
-      obj.y = event.target.y();
-      obj.rotation = event.target.rotation();
-      obj.scaleX = event.target.scaleX();
-      obj.scaleY = event.target.scaleY();
-    },
-
-    handleStageMouseDown (e) {
-      // clicked on stage - clear selection
-      if (e.target === e.target.getStage()) {
-        this.selectedShapeName = '';
-        this.updateTransformer();
-        return;
-      }
-
-      // clicked on transformer - do nothing
-      const clickedOnTransformer =
-        e.target.getParent().className === 'Transformer';
-      if (clickedOnTransformer) {
-        return;
-      }
-
-      // find clicked obj by its name
-      const name = e.target.name();
-
-      const obj = this.pages[0].layer.children.find((r) => r.name === name);
-
-      if (obj) {
-        this.selectedShapeName = name;
-      } else {
-        this.selectedShapeName = '';
-      }
-
-      this.updateTransformer();
-    },
-
-    updateTransformer () {
-      // do nothing if no objects
-      if (!this.$refs.transformer) {
-        return;
-      }
-
-      // here we need to manually attach or detach Transformer node
-      const transformerNode = this.$refs.transformer[0].getNode();
-
-      const stage = transformerNode.getStage();
-
-      const selectedNode = stage.findOne(`.${this.selectedShapeName}`);
-      // do nothing if selected node is already attached
-      if (selectedNode === transformerNode.node()) {
-        return;
-      }
-
-      if (selectedNode) {
-        // attach to another node
-        transformerNode.nodes([selectedNode]);
-      } else {
-        // remove transformer
-        transformerNode.nodes([]);
-      }
-
-      transformerNode.getLayer().batchDraw();
+      this.canvas[this.pages[0].id].createObject({ layerId: this.pages[0].layers[0].id, config });
     }
   },
 
@@ -371,6 +259,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.fade-transition {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter, .fade-leave {
+  opacity: 0;
+}
+
 .template-builder {
   .active-options {
     &::before,
