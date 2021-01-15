@@ -13,7 +13,7 @@
         class="px-2 py-1"
       >
         <img
-          v-on="$listeners"
+          @click="onSelectItem"
           class="w-full rounded cursor-pointer"
           :src="image"
           :alt="image"
@@ -47,6 +47,16 @@ export default {
   },
 
   methods: {
+    onSelectItem (e) {
+      this.$listeners.click({
+        id: this.$randomId(),
+        name: `image-${this.$randomId()}`,
+        component: 'Image',
+        url: e.target.src,
+        draggable: true
+      });
+    },
+
     handleOnDragstart (e) {
       console.log(e);
     }

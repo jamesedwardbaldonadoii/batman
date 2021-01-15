@@ -144,53 +144,7 @@ export default {
           layers: [{
             id: 'layer',
             name: 'layer',
-            children: [
-              {
-                id: this.$randomId(),
-                component: 'Circle',
-                name: 'circle',
-                // actual config
-                rotation: 0,
-                x: 241.0558985105058,
-                y: 83.99879798662761,
-                scaleX: 1,
-                scaleY: 1,
-                radius: 70,
-                fill: 'green',
-                draggable: true
-              },
-              {
-                id: this.$randomId(),
-                name: 'rect1',
-                component: 'Rect',
-
-                // actual config
-                rotation: 0,
-                x: 10,
-                y: 10,
-                width: 100,
-                height: 100,
-                scaleX: 1,
-                scaleY: 1,
-                fill: 'red',
-                draggable: true
-              },
-              {
-                id: this.$randomId(),
-                name: 'img1',
-                component: 'Image',
-                url: 'https://konvajs.org/assets/yoda.jpg',
-
-                // actual config
-                x: 241.0558985105058,
-                y: 83.99879798662761,
-                width: 150,
-                height: 200,
-                scaleX: 1,
-                scaleY: 1,
-                draggable: true
-              }
-            ]
+            children: []
           }]
         }
       ],
@@ -238,15 +192,8 @@ export default {
       this.style.top = `${el.top - elTemplateBuilder.top - 1}px`;
     },
 
-    onItemSelect (e) {
-      const config = {
-        id: this.$randomId(),
-        name: 'img2',
-        component: 'Image',
-        url: e.target.src,
-        draggable: true
-      };
-
+    onItemSelect (config) {
+      this.pages[0].layers[0].children.push(config);
       this.canvas[this.pages[0].id].createObject({ layerId: this.pages[0].layers[0].id, config });
     }
   },

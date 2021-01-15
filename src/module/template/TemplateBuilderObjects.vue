@@ -4,7 +4,10 @@
       Objects
     </div>
     <vue-scroll class="flex-1">
-      <div id="stage-templatebuilder" />
+      <div
+        id="stage-templatebuilder"
+        class="cursor-pointer"
+      />
     </vue-scroll>
   </div>
 </template>
@@ -49,7 +52,7 @@ export default {
           height: 100,
           scaleX: 1,
           scaleY: 1,
-          fill: 'violet',
+          fill: 'white',
           draggable: false
         },
         {
@@ -62,8 +65,8 @@ export default {
           scaleX: 1,
           scaleY: 1,
           radius: 50,
-          fill: 'blue',
-          draggable: true
+          fill: 'white',
+          draggable: false
         }
       ]
     };
@@ -71,7 +74,14 @@ export default {
 
   methods: {
     onSelectItem (config) {
-      this.$listeners.click(config);
+      this.$listeners.click({
+        ...config,
+        id: this.$randomId(),
+        name: `${config.component.toLowerCase()}-${this.$randomId()}`,
+        x: 0,
+        y: 0,
+        draggable: true
+      });
     },
 
     handleOnDragstart (e) {

@@ -44,6 +44,7 @@ class CanvasBuilder extends CanvasBuilderEventHandler {
 
     this.stage.on('dragover', this.handleDragover);
     this.stage.on('drop', this.handleDrop);
+    this.stage.on('keydown', this.handleOnKeypress);
 
     if (this.transformer) {
       this.stage.on('mousedown touchstart', (event) => {

@@ -12,6 +12,14 @@ class EventsHandler {
     node.on('dragmove', this.handleOndragmove);
     node.on('dragend', this.handleOnDragend);
     node.on('dragstart', this.handleOnDragstart);
+    node.on('keydown', this.handleOnKeypress);
+  }
+
+  /**
+   * @description handle keypress
+   */
+  handleOnKeypress (event) {
+    console.log(event.which, 'test');
   }
 
   /**
